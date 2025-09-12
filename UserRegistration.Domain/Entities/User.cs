@@ -7,8 +7,8 @@ namespace UserRegistration.Domain.Entities
     {
         public User()
         {
-            Id = Guid.NewGuid();
-            CreationDate = DateTime.UtcNow;
+            this.Id = Guid.NewGuid();
+            this.CreationDate = DateTime.UtcNow;
         }
 
         public User(
@@ -18,7 +18,7 @@ namespace UserRegistration.Domain.Entities
             string nationality,
             string cpf,
             string password,
-            Profile profile,
+            Profile profile = null,
             string email = null)
         {
             if (!IsValidCPF(cpf))
@@ -26,18 +26,19 @@ namespace UserRegistration.Domain.Entities
             if (!IsValidPassword(password))
                 throw new ArgumentException("A senha deve ter mais de 8 caracteres, incluindo letras maiúsculas, minúsculas e caracteres especiais.");
 
-            Id = Guid.NewGuid();
-            Name = name;
-            Gender = gender;
-            Email = email;
-            PlaceOfBirth = placeOfBirth;
-            Nationality = nationality;
-            CPF = cpf;
-            Password = password;
+            this.Id = Guid.NewGuid();
+            this.Name = name;
+            this.Gender = gender;
+            this.Email = email;
+            this.PlaceOfBirth = placeOfBirth;
+            this.Nationality = nationality;
+            this.CPF = cpf;
+            this.Password = password;
 
-            CreationDate = DateTime.UtcNow;
+            this.Profile.Id = profile.Id;
+            this.Profile.Name = profile.Name;
 
-            Excluded = false;
+            this.CreationDate = DateTime.UtcNow;
         }
         
         public string Name { get; private set; }
@@ -56,7 +57,7 @@ namespace UserRegistration.Domain.Entities
 
         public Profile Profile { get; private set; }
 
-        public bool Excluded { get; set; } = false;
+        public bool Excluded { get; private set; } = false;
 
         public DateTime? ExclusionDate { get; set; }
 
@@ -144,6 +145,12 @@ namespace UserRegistration.Domain.Entities
                 throw new ArgumentException("CPF inválido.");
 
             this.CPF = cpf;
+        }
+
+        public void DeleteUser()
+        {
+            this.Excluded = true;
+            this.ExclusionDate = DateTime.UtcNow;
         }
 
         public void AddProfile(Profile profile)
