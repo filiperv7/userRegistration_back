@@ -1,5 +1,6 @@
-﻿using UserRegistration.Domain.Common;
+﻿using AutoMapper;
 using System.Text.RegularExpressions;
+using UserRegistration.Domain.Common;
 
 namespace UserRegistration.Domain.Entities
 {
@@ -55,6 +56,8 @@ namespace UserRegistration.Domain.Entities
         public string Password { get; private set; }
 
         public Profile Profile { get; private set; }
+
+        public int ProfileId {get; private set;}
 
         public bool Excluded { get; private set; } = false;
 
@@ -146,10 +149,9 @@ namespace UserRegistration.Domain.Entities
             this.CPF = cpf;
         }
 
-        public void AddProfile(Profile profile)
+        public void AddProfile(int idProfile)
         {
-            this.Profile.Id = profile.Id;
-            this.Profile.Name = profile.Name;
+            this.ProfileId = idProfile;
         }
     }
 }

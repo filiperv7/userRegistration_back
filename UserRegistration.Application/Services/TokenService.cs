@@ -23,7 +23,7 @@ namespace UserRegistration.Application.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtOptions.SecretKey);
 
-            var roleClaim = new Claim(ClaimTypes.Role, user.Profile.Name);
+            var roleClaim = new Claim(ClaimTypes.Role, user.Profile.Id.ToString());
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
