@@ -18,7 +18,7 @@ namespace UserRegistration.Domain.Entities
             string nationality,
             string cpf,
             string password,
-            Profile profile = null,
+            Profile profile,
             string email = null)
         {
             if (!IsValidCPF(cpf))
@@ -35,8 +35,7 @@ namespace UserRegistration.Domain.Entities
             this.CPF = cpf;
             this.Password = password;
 
-            this.Profile.Id = profile.Id;
-            this.Profile.Name = profile.Name;
+            this.Profile = profile;
 
             this.CreationDate = DateTime.UtcNow;
         }
@@ -145,12 +144,6 @@ namespace UserRegistration.Domain.Entities
                 throw new ArgumentException("CPF inválido.");
 
             this.CPF = cpf;
-        }
-
-        public void DeleteUser()
-        {
-            this.Excluded = true;
-            this.ExclusionDate = DateTime.UtcNow;
         }
 
         public void AddProfile(Profile profile)

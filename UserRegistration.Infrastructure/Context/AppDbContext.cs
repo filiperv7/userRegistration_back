@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserRegistration.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace UserRegistration.Infrastructure.Context
 {
@@ -24,8 +23,7 @@ namespace UserRegistration.Infrastructure.Context
                 userProfile
             );
 
-            var passwordHasher = new PasswordHasher<User>();
-            var hashedPassword = passwordHasher.HashPassword(null, "$enHa32!");
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword("$enHa32!");
 
             var creationDate = DateTime.UtcNow;
             modelBuilder.Entity<User>().HasData(
