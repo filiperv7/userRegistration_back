@@ -93,14 +93,6 @@ namespace UserRegistration.Domain.Entities
 
         public DateTime? ExclusionDate { get; set; }
 
-        public void SetPassword(string password)
-        {
-            if (!IsValidPassword(password))
-                throw new ArgumentException("A senha deve ter mais de 8 caracteres, incluindo letras maiúsculas, minúsculas e caracteres especiais.");
-
-            this.Password = password;
-        }
-
         public bool IsValidPassword(string password)
         {
             if (string.IsNullOrEmpty(password) || password.Length < 8)
@@ -161,6 +153,15 @@ namespace UserRegistration.Domain.Entities
             this.ExclusionDate = DateTime.UtcNow;
         }
 
+        public void SetPassword(string password)
+        {
+            if (!IsValidPassword(password))
+                throw new ArgumentException("A senha deve ter mais de 8 caracteres, incluindo letras maiúsculas, minúsculas e caracteres especiais.");
+
+            this.Password = password;
+        }
+
+
         public void SetName(string name)
         {
             this.Name = name;
@@ -179,7 +180,17 @@ namespace UserRegistration.Domain.Entities
             this.CPF = cpf;
         }
 
-        public void AddProfile(int idProfile)
+        public void SetPlaceOfBirth(string placeOfBirth)
+        {
+            this.PlaceOfBirth = placeOfBirth;
+        }
+
+        public void SetNationality(string nationality)
+        {
+            this.Nationality = nationality;
+        }
+
+        public void SetProfile(int idProfile)
         {
             this.ProfileId = idProfile;
         }

@@ -35,7 +35,7 @@ namespace UserRegistration.Application.Services
 
             user.SetPassword(PasswordHelper.HashPassword(user.Password));
 
-            user.AddProfile(idProfile);
+            user.SetProfile(idProfile);
 
             await _userRepository.Create(user);
 

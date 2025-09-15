@@ -1,6 +1,4 @@
-﻿using UserRegistration.API.Models;
-
-namespace UserRegistration.API.Models
+﻿namespace UserRegistration.API.Models
 {
     public class UserResponseDto
     {

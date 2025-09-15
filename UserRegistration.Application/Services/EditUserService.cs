@@ -32,6 +32,8 @@ namespace UserRegistration.Application.Services
             existingUser.SetName(user.Name);
             existingUser.SetEmail(user.Email);
             existingUser.SetCpf(user.CPF);
+            existingUser.SetPlaceOfBirth(user.PlaceOfBirth);
+            existingUser.SetNationality(user.Nationality);
             existingUser.UpdateDate = DateTime.UtcNow;
 
             await _userRepository.Update(existingUser);
