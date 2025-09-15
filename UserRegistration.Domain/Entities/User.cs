@@ -40,7 +40,37 @@ namespace UserRegistration.Domain.Entities
 
             this.CreationDate = DateTime.UtcNow;
         }
-        
+
+        public User(
+            Guid id,
+            string name,
+            string gender,
+            string placeOfBirth,
+            string nationality,
+            string cpf,
+            string password,
+            Profile profile,
+            string email = null)
+        {
+            if (!IsValidCPF(cpf))
+                throw new ArgumentException("CPF inválido.");
+            if (!IsValidPassword(password))
+                throw new ArgumentException("A senha deve ter mais de 8 caracteres, incluindo letras maiúsculas, minúsculas e caracteres especiais.");
+
+            this.Id = id;
+            this.Name = name;
+            this.Gender = gender;
+            this.Email = email;
+            this.PlaceOfBirth = placeOfBirth;
+            this.Nationality = nationality;
+            this.CPF = cpf;
+            this.Password = password;
+
+            this.Profile = profile;
+
+            this.CreationDate = DateTime.UtcNow;
+        }
+
         public string Name { get; private set; }
 
         public string? Gender { get; private set; }

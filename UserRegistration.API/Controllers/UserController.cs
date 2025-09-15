@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserRegistration.API.Models;
 using UserRegistration.Application.Helpers;
-using UserRegistration.Application.Services;
 using UserRegistration.Domain.Entities;
 using UserRegistration.Domain.Interfaces.IServices;
 
@@ -16,18 +15,21 @@ namespace UserRegistration.API.Controllers
         private readonly ILoginService _loginService;
         private readonly ICreateUserService _createUserService;
         private readonly IFindUsersServices _findUsersServices;
+        private readonly IEditUserService _editUserService;
         private readonly IMapper _mapper;
 
         public UserController(
             ILoginService loginService,
             ICreateUserService createUserService,
             IFindUsersServices findUsersServices,
+            IEditUserService editUserService,
             IMapper mapper
             )
         {
             _loginService = loginService;
             _createUserService = createUserService;
             _findUsersServices = findUsersServices;
+            _editUserService = editUserService;
             _mapper = mapper;
         }
 
@@ -115,6 +117,38 @@ namespace UserRegistration.API.Controllers
 
             var usersDto = _mapper.Map<IEnumerable<UserResponseDto>>(users);
             return Ok(usersDto);
+        }
+
+        [Authorize]
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDto userDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = _mapper.Map<User>(userDto);
+
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var profiles = JwtHelper.GetProfilesFromToken(token);
+            var requestUserId = JwtHelper.GetClaimIdUserFromToken(token);
+
+            try
+            {
+                bool updated = await _editUserService.EditUser(user, profiles, Guid.Parse(requestUserId));
+
+                return updated
+                    ? Ok(new { Message = "Usuário atualizado com sucesso!" })
+                    : BadRequest(new { Message = "Falha na atualização do usuário, CPF já utilizado." });
+            }
+            catch (UnauthorizedAccessException error)
+            {
+                return Forbid(error.Message);
+            }
+            catch (KeyNotFoundException error)
+            {
+                return NotFound(error.Message);
+            }
         }
 
         [Authorize]
