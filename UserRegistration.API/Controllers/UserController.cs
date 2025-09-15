@@ -16,6 +16,7 @@ namespace UserRegistration.API.Controllers
         private readonly ICreateUserService _createUserService;
         private readonly IFindUsersServices _findUsersServices;
         private readonly IEditUserService _editUserService;
+        private readonly IDeleteUserService _deleteUserService;
         private readonly IMapper _mapper;
 
         public UserController(
@@ -23,6 +24,7 @@ namespace UserRegistration.API.Controllers
             ICreateUserService createUserService,
             IFindUsersServices findUsersServices,
             IEditUserService editUserService,
+            IDeleteUserService deleteUserService,
             IMapper mapper
             )
         {
@@ -30,6 +32,7 @@ namespace UserRegistration.API.Controllers
             _createUserService = createUserService;
             _findUsersServices = findUsersServices;
             _editUserService = editUserService;
+            _deleteUserService = deleteUserService;
             _mapper = mapper;
         }
 
@@ -148,6 +151,28 @@ namespace UserRegistration.API.Controllers
             catch (KeyNotFoundException error)
             {
                 return NotFound(error.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var profiles = JwtHelper.GetProfilesFromToken(token);
+
+            try
+            {
+                bool userUpdated = await _deleteUserService.DeleteUser(id, profiles);
+
+                return userUpdated
+                    ? Ok(new { Message = "Usuário deletado com sucesso." })
+                    : NotFound(new { Message = "Usuário não encontrado." });
+            }
+            catch (UnauthorizedAccessException error)
+            {
+                return Forbid(error.Message);
             }
         }
 
