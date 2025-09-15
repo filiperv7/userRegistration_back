@@ -11,6 +11,11 @@ namespace UserRegistration.API.Mapping
             CreateMap<UserCreationDto, User>()
                 .ForMember(dest => dest.CPF, opt => opt.MapFrom(src => Regex.Replace(src.Cpf, "[^0-9]", "")))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
+
+            CreateMap<User, UserResponseDto>()
+               .ForMember(dest => dest.Profile, opt => opt.MapFrom(src => src.Profile));
+
+            CreateMap<Profile, ProfileDto>();
         }
     }
 }

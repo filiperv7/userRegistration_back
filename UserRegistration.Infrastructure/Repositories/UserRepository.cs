@@ -23,7 +23,15 @@ namespace UserRegistration.Infrastructure.Repositories
         {
             return await _context.Users
             .Include(u => u.Profile)
-            .Where(u => u.Profile.Equals(idProfile) && !u.Excluded)
+            .Where(u => u.ProfileId.Equals(idProfile) && !u.Excluded)
+            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
+            return await _context.Users
+            .Include(u => u.Profile)
+            .Where(u => !u.Excluded)
             .ToListAsync();
         }
 

@@ -6,6 +6,7 @@ namespace UserRegistration.Domain.Interfaces.IRepositories
     {
         Task<User> GetUserByCpf(string cpf);
         Task<IEnumerable<User>> GetUsersByProfile(int idProfile);
+        Task<IEnumerable<User>> GetAllUsers();
         Task<User> GetById(Guid id);
         Task Create(User user);
         Task Update(User user);

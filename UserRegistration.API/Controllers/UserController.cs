@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserRegistration.API.Models;
 using UserRegistration.Application.Helpers;
+using UserRegistration.Application.Services;
 using UserRegistration.Domain.Entities;
 using UserRegistration.Domain.Interfaces.IServices;
 
@@ -14,16 +15,19 @@ namespace UserRegistration.API.Controllers
     {
         private readonly ILoginService _loginService;
         private readonly ICreateUserService _createUserService;
+        private readonly IFindUsersServices _findUsersServices;
         private readonly IMapper _mapper;
 
         public UserController(
             ILoginService loginService,
             ICreateUserService createUserService,
+            IFindUsersServices findUsersServices,
             IMapper mapper
             )
         {
             _loginService = loginService;
             _createUserService = createUserService;
+            _findUsersServices = findUsersServices;
             _mapper = mapper;
         }
 
@@ -63,6 +67,69 @@ namespace UserRegistration.API.Controllers
             {
                 return Forbid(error.Message);
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> FindUserById(Guid id)
+        {
+            var user = await _findUsersServices.FindUserById(id);
+
+            if (user == null)
+            {
+                return NotFound(new { Message = "Usuário não encontrado." });
+            }
+
+            var userDto = _mapper.Map<UserResponseDto>(user);
+            return Ok(userDto);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("all")]
+        public async Task<IActionResult> FindAllUsers()
+        {
+            var users = await _findUsersServices.FindAllUsers();
+
+            if (!users.Any())
+            {
+               return NotFound(new { Message = "Nenhum usuário encontrado." });
+            }
+
+            var usersDto = _mapper.Map<IEnumerable<UserResponseDto>>(users);
+            return Ok(usersDto);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("profile/{idProfile}")]
+        public async Task<IActionResult> FindUsersByProfile(int idProfile)
+        {
+            var users = await _findUsersServices.FindUsersByProfile(idProfile);
+
+            if (!users.Any())
+            {
+                return NotFound(new { Message = "Nenhum usuário encontrado com o perfil especificado." });
+            }
+
+            var usersDto = _mapper.Map<IEnumerable<UserResponseDto>>(users);
+            return Ok(usersDto);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("infos_of_logged_user")]
+        public async Task<IActionResult> GetInfosOfLoggedUser()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var requestUserId = JwtHelper.GetClaimIdUserFromToken(token);
+
+            User loggedUser = await _findUsersServices.GetInfosOfLoggedUser(Guid.Parse(requestUserId));
+
+            return loggedUser != null
+                ? Ok(_mapper.Map<UserResponseDto>(loggedUser))
+                : NotFound(new { Message = "Usuário não encontrado." });
         }
     }
 }
