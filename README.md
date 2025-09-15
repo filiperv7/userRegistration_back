@@ -4,7 +4,7 @@ Esta é uma aplicação .NET e C#; também utilizei Entity Framework, SQL Server
 
 #### Aqui está o [Front-end](https://github.com/filiperv7/userRegistration_front) desta aplicação.
 
-CadPLus é um gerenciador hospitalar de funcionários e pacientes. Nele você pode:
+## Nesta app você pode:
 - visualizar lista de usuário cadastrados;
 - criar contas (se for Admin);
 - editar contas (se for Admin);
